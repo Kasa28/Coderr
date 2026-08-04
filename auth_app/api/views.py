@@ -1,4 +1,5 @@
 from rest_framework import status
+from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -33,3 +34,26 @@ class UserRegistrationView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(request=request, username=username, password=password)
+
+        if user is None:
+            return Response(
+                {"detail": "Benutzername oder Passwort ist falsch."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            "token": token.key,
+            "username": user.username,
+            "email": user.email,
+            "user_id": user.id,
+        })

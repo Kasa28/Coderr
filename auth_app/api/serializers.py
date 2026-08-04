@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from auth_app.models import CustomUser
+from auth_app.models import CoderrUser
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = CustomUser
+        model = CoderrUser
         fields = [
             "username",
             "email",
@@ -29,7 +29,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop("repeated_password")
 
-        user = CustomUser.objects.create_user(
+        user = CoderrUser.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
