@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class MarketplaceOffer(models.Model):
-    creator = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="marketplace_offers",
