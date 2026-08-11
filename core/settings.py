@@ -127,7 +127,18 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = "auth_app.CoderrUser"
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+
 # Local frontend development servers (for example VS Code Live Server).
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
 ]
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
