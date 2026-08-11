@@ -3,7 +3,7 @@ from profile_app.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    
+
     username = serializers.CharField(
         source="user.username",
         read_only=True,
@@ -56,3 +56,45 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         user.save()
         return super().update(instance, validated_data)
+
+
+class BusinessProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    type = serializers.CharField(source="user.type", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+        read_only_fields = fields
+
+
+class CustomerProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    type = serializers.CharField(source="user.type", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "type",
+        ]
+        read_only_fields = fields
