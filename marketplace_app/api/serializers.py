@@ -1,7 +1,5 @@
 from rest_framework import serializers
-
 from marketplace_app.models import MarketplaceOffer, OfferPackage
-
 
 class OfferPackageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +16,7 @@ class OfferPackageSerializer(serializers.ModelSerializer):
 
 
 class OfferSerializer(serializers.ModelSerializer):
+    user = serializers.IntegerField(source="creator_id", read_only=True)
     details = OfferPackageSerializer(
         source="packages",
         many=True,
