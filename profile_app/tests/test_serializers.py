@@ -84,3 +84,40 @@ class ProfileSerializerTest(TestCase):
         self.assertEqual(profile.tel, "987654321")
         self.assertEqual(profile.description, "Neue Beschreibung")
         self.assertEqual(profile.working_hours, "10-18")
+
+
+
+    def test_username_and_type_read_only(self):
+        user = User.objects.create_user(
+            username="max_business",
+            email="max@business.de",
+            password="testpassword123",
+            first_name="Max",
+            last_name="Mustermann",
+            type="business",
+        )
+
+        profile = Profile.objects.create(
+            user=user,
+            location="Berlin",
+        )
+
+        data = {
+            "username": "new_username",
+            "type": "customer",
+        }
+
+        serializer = ProfileSerializer(
+            profile,
+            data=data,
+            partial=True,
+        )
+
+        self.assertTrue(serializer.is_valid())
+
+        serializer.save()
+
+        user.refresh_from_db()
+
+        self.assertEqual(user.username, "max_business")
+        self.assertEqual(user.type, "business")
