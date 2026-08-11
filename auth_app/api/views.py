@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from profile_app.models import Profile
 
 from .serializers import UserRegistrationSerializer
 
@@ -16,6 +17,7 @@ class UserRegistrationView(APIView):
 
         if serializer.is_valid():
             user = serializer.save()
+            Profile.objects.create(user=user)
             token, _ = Token.objects.get_or_create(user=user)
 
             response_data = {
