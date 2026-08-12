@@ -16,13 +16,16 @@ class OfferPackageSerializer(serializers.ModelSerializer):
 
 
 class OfferSerializer(serializers.ModelSerializer):
-    user = serializers.IntegerField(source="creator_id", read_only=True)
     details = OfferPackageSerializer(
         source="packages",
         many=True,
     )
-    min_price = serializers.SerializerMethodField()
-    min_delivery_time = serializers.SerializerMethodField()
+    min_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+    min_delivery_time = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = MarketplaceOffer
@@ -46,17 +49,6 @@ class OfferSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-
-    def get_min_price(self, obj):
-        prices = [package.price for package in obj.packages.all()]
-        return min(prices) if prices else None
-
-    def get_min_delivery_time(self, obj):
-        delivery_times = [
-            package.delivery_time_in_days
-            for package in obj.packages.all()
-        ]
-        return min(delivery_times) if delivery_times else None
 
     def create(self, validated_data):
         packages_data = validated_data.pop("packages")
