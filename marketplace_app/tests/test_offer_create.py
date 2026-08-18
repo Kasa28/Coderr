@@ -19,7 +19,7 @@ class CreateMarketplaceOfferTests(APITestCase):
 
     def test_business_user_can_create_offer(self):
         new_offer_data = {
-            "title": "Neue Website",
+            "title": "New Website",
             "description": "Ich erstelle eine Website.",
             "details": [
                 {
