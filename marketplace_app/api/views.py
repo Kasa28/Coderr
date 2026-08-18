@@ -4,7 +4,7 @@ from rest_framework import filters, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from marketplace_app.api.filters import OfferFilter
 from marketplace_app.api.paginations import OffersResultPagination
-from marketplace_app.api.permissions import IsAuthenticatedBusinessUser
+from marketplace_app.api.permissions import IsAuthenticatedBusinessUser, IsOfferOwner
 from marketplace_app.api.serializers import OfferSerializer
 from marketplace_app.models import MarketplaceOffer
 
@@ -40,9 +40,17 @@ class OffersListView(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class OfferDetailView(generics.RetrieveAPIView):
+class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OfferSerializer
-    permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+
+        return [
+            IsAuthenticated(),
+            IsOfferOwner(),
+        ]
 
     def get_queryset(self):
         return (

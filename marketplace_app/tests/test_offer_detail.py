@@ -36,3 +36,12 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(response.data["id"],self.offer.id)
         self.assertEqual(response.data["title"],"Testangebot")
         self.assertEqual(len(response.data["details"]),1)
+
+
+    def test_owner_can_update_offer_title(self):
+        self.client.force_authenticate(user=self.business_user)
+        update_data = {"title": "Change offer title"}
+        response = self.client.patch(f"/api/offers/{self.offer.id}/",update_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.offer.refresh_from_db()
+        self.assertEqual(self.offer.title, "Change offer title")
