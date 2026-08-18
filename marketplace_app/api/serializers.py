@@ -59,5 +59,38 @@ class OfferSerializer(serializers.ModelSerializer):
                 offer=offer,
                 **package_data,
             )
-
         return offer
+
+    
+    def update(self, offer, validated_data):
+        package_list = validated_data.pop("packages", [])
+        updated_offer = super().update(
+            offer,
+            validated_data,
+        )
+
+        for package_data in package_list:
+            offer_type = package_data["offer_type"]
+            package = updated_offer.packages.get(
+                offer_type=offer_type,
+            )
+
+            if "title" in package_data:
+                package.title = package_data["title"]
+
+            if "revisions" in package_data:
+                package.revisions = package_data["revisions"]
+
+            if "delivery_time_in_days" in package_data:
+                package.delivery_time_in_days = (
+                    package_data["delivery_time_in_days"]
+                )
+
+            if "price" in package_data:
+                package.price = package_data["price"]
+
+            if "features" in package_data:
+                package.features = package_data["features"]
+
+            package.save()
+        return updated_offer

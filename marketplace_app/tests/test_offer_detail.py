@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 from marketplace_app.models import MarketplaceOffer, OfferPackage
+from decimal import Decimal
 
 User = get_user_model()
 
@@ -80,3 +81,31 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(MarketplaceOffer.objects.count(),1,)
         self.assertEqual(OfferPackage.objects.count(),1,)
+
+
+    def test_owner_can_update_offer_package(self):
+        self.client.force_authenticate(
+            user=self.business_user,
+        )
+
+        update_data = {
+            "details": [
+                {
+                    "title": "New Basic-Paket",
+                    "revisions": 2,
+                    "delivery_time_in_days": 4,
+                    "price": "150.00",
+                    "features": ["New Testfunction"],
+                    "offer_type": "basic",
+                }
+            ]
+        }
+
+        response = self.client.patch(f"/api/offers/{self.offer.id}/", update_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        package = OfferPackage.objects.get(offer=self.offer, offer_type="basic")
+        self.assertEqual(package.title, "New Basic-Paket")
+        self.assertEqual(package.revisions,2)
+        self.assertEqual(package.delivery_time_in_days,4)
+        self.assertEqual(package.price, Decimal("150.00"))
+        self.assertEqual(package.features,["New Testfunction"])
