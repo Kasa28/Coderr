@@ -5,7 +5,7 @@ from marketplace_app.models import (MarketplaceOffer, OfferPackage)
 
 User = get_user_model()
 
-class GetOfferListTests(APITestCase):
+class GetMarketplaceOfferListTests(APITestCase):
 
     def setUp(self):
         self.business_user = User.objects.create_user(
