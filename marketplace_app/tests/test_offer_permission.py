@@ -34,3 +34,9 @@ class OfferPermissionTests(APITestCase):
         response = self.client.post("/api/offers/", self.offer_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(MarketplaceOffer.objects.count(),0)
+
+
+    def test_unauthenticated_user_can_not_create_offer(self):
+        response = self.client.post("/api/offers/", self.offer_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(MarketplaceOffer.objects.count(),0,)

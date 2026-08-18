@@ -38,3 +38,21 @@ class OffersListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class OfferDetailView(generics.RetrieveAPIView):
+    serializer_class = OfferSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return (
+            MarketplaceOffer.objects
+            .select_related("user")
+            .prefetch_related("packages")
+            .annotate(
+                min_price=Min("packages__price"),
+                min_delivery_time=Min(
+                    "packages__delivery_time_in_days"
+                ),
+            )
+        )
