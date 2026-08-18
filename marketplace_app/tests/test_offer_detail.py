@@ -16,7 +16,7 @@ class OfferDetailTests(APITestCase):
 
         self.offer = MarketplaceOffer.objects.create(
             user=self.business_user,
-            title="Testangebot",
+            title="Testoffer",
             description="Testdescription",
         )
 
@@ -34,7 +34,7 @@ class OfferDetailTests(APITestCase):
         response = self.client.get(f"/api/offers/{self.offer.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"],self.offer.id)
-        self.assertEqual(response.data["title"],"Testangebot")
+        self.assertEqual(response.data["title"],"Testoffer")
         self.assertEqual(len(response.data["details"]),1)
 
 
@@ -45,3 +45,25 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.offer.refresh_from_db()
         self.assertEqual(self.offer.title, "Change offer title")
+
+
+    def test_other_user_can_not_update_offer(self):
+        other_business_user = User.objects.create_user(
+            username="other_business_user",
+            password="Testpassword123!",
+            type="business",
+        )
+
+        self.client.force_authenticate(user=other_business_user)
+        update_data = {"title": "external changes"}
+        response = self.client.patch(f"/api/offers/{self.offer.id}/", update_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.offer.refresh_from_db()
+        self.assertEqual(self.offer.title,"Testoffer")
+
+    def test_owner_can_delete_offer(self):
+        self.client.force_authenticate(user=self.business_user)
+        response = self.client.delete(f"/api/offers/{self.offer.id}/")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(MarketplaceOffer.objects.count(),0)
+        self.assertEqual(OfferPackage.objects.count(),0)
