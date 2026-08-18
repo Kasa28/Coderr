@@ -5,8 +5,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from marketplace_app.api.filters import OfferFilter
 from marketplace_app.api.paginations import OffersResultPagination
 from marketplace_app.api.permissions import IsAuthenticatedBusinessUser, IsOfferOwner
-from marketplace_app.api.serializers import OfferSerializer
-from marketplace_app.models import MarketplaceOffer
+from marketplace_app.api.serializers import OfferSerializer, OfferPackageSerializer
+from marketplace_app.models import MarketplaceOffer, OfferPackage
 
 
 class OffersListView(generics.ListCreateAPIView):
@@ -64,3 +64,11 @@ class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
                 ),
             )
         )
+
+class OfferPackageDetailView(generics.RetrieveAPIView):
+    queryset = OfferPackage.objects.select_related(
+        "offer",
+        "offer__user",
+    )
+    serializer_class = OfferPackageSerializer
+    permission_classes = [AllowAny]
