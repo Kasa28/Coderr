@@ -67,3 +67,16 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(MarketplaceOffer.objects.count(),0)
         self.assertEqual(OfferPackage.objects.count(),0)
+
+
+    def test_other_user_can_not_delete_offer(self):
+        other_business_user = User.objects.create_user(
+            username="other_business_user_delete",
+            password="Testpassword123!",
+            type="business",
+        )
+        self.client.force_authenticate(user=other_business_user)
+        response = self.client.delete(f"/api/offers/{self.offer.id}/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(MarketplaceOffer.objects.count(),1,)
+        self.assertEqual(OfferPackage.objects.count(),1,)
