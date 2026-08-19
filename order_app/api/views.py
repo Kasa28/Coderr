@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from order_app.api.permissions import CheckIsCustomerUser
-from order_app.api.serializers import OrderListCreateSerializer
+from order_app.api.permissions import CheckIsCustomerUser, CheckBusinessOwnsOrder, CheckIsBusinessUser
+from order_app.api.serializers import OrderListCreateSerializer, OrderStatusSerializer
 from order_app.models import Order
 
 
@@ -26,4 +26,20 @@ class OrdersView(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [IsAuthenticated(), CheckIsCustomerUser()]
+        return [IsAuthenticated()]
+
+
+class OrderDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderStatusSerializer
+
+
+
+    def get_permissions(self):
+        if self.request.method in ["PUT", "PATCH"]:
+            return [
+                IsAuthenticated(),
+                CheckIsBusinessUser(),
+                CheckBusinessOwnsOrder(),
+            ]
         return [IsAuthenticated()]
