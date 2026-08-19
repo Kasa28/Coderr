@@ -58,3 +58,24 @@ class GetMarketplaceOfferListTests(APITestCase):
         found_offer = response.data["results"][0]
 
         self.assertEqual(found_offer["title"],"Search Title")
+
+
+    def test_filter_offers_by_creator(self):
+        other_business_user = User.objects.create_user(
+            username="other_business_user",
+            password="Testpassword123!",
+            type="business",
+        )
+
+        MarketplaceOffer.objects.create(
+            user=other_business_user,
+            title="The other offer from other user",
+            description="Testdescription",
+        )
+
+        response = self.client.get(f"/api/offers/?creator_id={self.business_user.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"],1)
+        found_offer = response.data["results"][0]
+        self.assertEqual(found_offer["user"], self.business_user.id)
