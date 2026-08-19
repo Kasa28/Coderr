@@ -109,3 +109,17 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(package.delivery_time_in_days,4)
         self.assertEqual(package.price, Decimal("150.00"))
         self.assertEqual(package.features,["New Testfunction"])
+
+
+    def test_get_single_offer_package(self):
+        package = OfferPackage.objects.get(
+            offer=self.offer,
+            offer_type="basic",
+        )
+
+        response = self.client.get(f"/api/offerdetails/{package.id}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], package.id)
+        self.assertEqual(response.data["title"], "Basic")
+        self.assertEqual(response.data["price"], "100.00")
+        self.assertEqual(response.data["offer_type"], "basic")
