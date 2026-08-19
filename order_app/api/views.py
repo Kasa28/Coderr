@@ -1,6 +1,6 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from order_app.api.permissions import CheckIsCustomerUser, CheckBusinessOwnsOrder, CheckIsBusinessUser
+from order_app.api.permissions import CheckIsCustomerUser, CheckBusinessOwnsOrder, CheckIsBusinessUser, UserCanViewOrder
 from order_app.api.serializers import OrderListCreateSerializer, OrderStatusSerializer
 from order_app.models import Order
 from django.contrib.auth import get_user_model
@@ -47,7 +47,7 @@ class OrderDetailView(generics.RetrieveUpdateAPIView):
                 CheckIsBusinessUser(),
                 CheckBusinessOwnsOrder(),
             ]
-        return [IsAuthenticated()]
+        return [IsAuthenticated(), UserCanViewOrder()]
     
 
 class OpenOrdersCountView(APIView):

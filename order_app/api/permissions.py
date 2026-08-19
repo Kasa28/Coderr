@@ -29,3 +29,17 @@ class CheckBusinessOwnsOrder(BasePermission):
         return (
             order.business_user == request.user
         )
+
+
+class UserCanViewOrder(BasePermission):
+
+    def has_object_permission(
+        self,
+        request,
+        view,
+        order,
+    ):
+        user_is_customer = order.customer_user == request.user
+        user_is_business = order.business_user == request.user
+
+        return user_is_customer or user_is_business
