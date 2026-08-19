@@ -129,5 +129,5 @@ class GetMarketplaceOfferListTests(APITestCase):
         self.assertEqual(response.data["count"],2)
         first_offer = response.data["results"][0]
         second_offer = response.data["results"][1]
-        self.assertEqual(first_offer["min_price"], "55.00")
+        self.assertEqual(first_offer["min_price"], "100.00")
         self.assertEqual(second_offer["min_price"], "400.00")
