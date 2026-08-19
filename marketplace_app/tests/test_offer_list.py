@@ -15,7 +15,7 @@ class GetMarketplaceOfferListTests(APITestCase):
         )
         self.offer = MarketplaceOffer.objects.create(
             user=self.business_user,
-            title="Testangebot",
+            title="Testoffer",
             description="Test.",
         )
         OfferPackage.objects.create(
@@ -37,7 +37,7 @@ class GetMarketplaceOfferListTests(APITestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(len(response.data["results"]), 1)
         offer = response.data["results"][0]
-        self.assertEqual(offer["title"], "Testangebot")
+        self.assertEqual(offer["title"], "Testoffer")
         self.assertEqual(offer["user"], self.business_user.id)
         self.assertEqual(offer["min_price"], "100.00")
         self.assertEqual(offer["min_delivery_time"], 3)
@@ -79,3 +79,29 @@ class GetMarketplaceOfferListTests(APITestCase):
         self.assertEqual(response.data["count"],1)
         found_offer = response.data["results"][0]
         self.assertEqual(found_offer["user"], self.business_user.id)
+
+
+    def test_filter_offers_max_delivery_time(self):
+        offer_with_long_delivery_time = MarketplaceOffer.objects.create(
+            user=self.business_user,
+            title="Offer that takes longer",
+            description="Delivery is longer",
+        )
+
+        OfferPackage.objects.create(
+            offer=offer_with_long_delivery_time,
+            title="Slow Basic",
+            revisions=1,
+            delivery_time_in_days=10,
+            price="400.00",
+            features=["Testoffer"],
+            offer_type="basic",
+        )
+
+        response = self.client.get("/api/offers/?max_delivery_time=3")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"],1)
+        found_offer = response.data["results"][0]
+        self.assertEqual(found_offer["title"], "Testoffer")
+        self.assertEqual(found_offer["min_delivery_time"],3)

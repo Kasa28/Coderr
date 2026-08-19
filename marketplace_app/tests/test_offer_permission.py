@@ -15,7 +15,7 @@ class OfferPermissionTests(APITestCase):
         )
 
         self.offer_data = {
-            "title": "Testangebot",
+            "title": "Testoffer",
             "description": "Testdedescription",
             "details": [
                 {
