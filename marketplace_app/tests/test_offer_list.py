@@ -131,3 +131,17 @@ class GetMarketplaceOfferListTests(APITestCase):
         second_offer = response.data["results"][1]
         self.assertEqual(first_offer["min_price"], "100.00")
         self.assertEqual(second_offer["min_price"], "400.00")
+
+    def test_offer_list_returnsОffers_page(self):
+        for number in range(6):
+            MarketplaceOffer.objects.create(
+                user=self.business_user,
+                title=f"extra testoffer {number}",
+                description="Testdescription",
+            )
+
+        response = self.client.get("/api/offers/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"],7)
+        self.assertEqual(len(response.data["results"]),6)
+        self.assertIsNotNone(response.data["next"])
