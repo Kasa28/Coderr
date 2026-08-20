@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from order_app.api.permissions import CheckIsCustomerUser, CheckBusinessOwnsOrder, CheckIsBusinessUser, UserCanViewOrder
 from order_app.api.serializers import OrderListCreateSerializer, OrderStatusSerializer
 from order_app.models import Order
@@ -36,8 +36,8 @@ class OrdersView(generics.ListCreateAPIView):
         return [IsAuthenticated()]
 
 
-class OrderDetailView(generics.RetrieveUpdateAPIView):
-    """Retrieve an involved order or update its status as its provider."""
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, or delete an order with the required permission."""
 
     queryset = Order.objects.all()
     serializer_class = OrderStatusSerializer
@@ -45,6 +45,9 @@ class OrderDetailView(generics.RetrieveUpdateAPIView):
 
 
     def get_permissions(self):
+        if self.request.method == "DELETE":
+            return [IsAuthenticated(), IsAdminUser()]
+
         if self.request.method in ["PUT", "PATCH"]:
             return [
                 IsAuthenticated(),
@@ -100,5 +103,5 @@ class CompletedOrdersCountView(APIView):
         )
 
         return Response({
-            "order_count": number_of_completed_orders,
+            "completed_order_count": number_of_completed_orders,
         })

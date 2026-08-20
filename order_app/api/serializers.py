@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from marketplace_app.models import OfferPackage
 from order_app.models import Order
@@ -6,9 +7,8 @@ from order_app.models import Order
 class OrderListCreateSerializer(serializers.ModelSerializer):
     """List orders and create an order from a selected package."""
 
-    offer_detail_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfferPackage.objects.all(),
-        source="offer_detail",
+    offer_detail_id = serializers.IntegerField(
+        min_value=1,
         write_only=True,
     )
 
@@ -47,8 +47,12 @@ class OrderListCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create an order by copying the selected package data."""
-        selected_package = validated_data.pop(
-            "offer_detail"
+        offer_detail_id = validated_data.pop(
+            "offer_detail_id"
+        )
+        selected_package = get_object_or_404(
+            OfferPackage,
+            id=offer_detail_id,
         )
         customer_user = self.context["request"].user
         business_user = selected_package.offer.user
