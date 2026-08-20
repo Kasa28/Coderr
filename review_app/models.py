@@ -29,6 +29,9 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        verbose_name = "review"
+        verbose_name_plural = "reviews"
+        ordering = ["-updated_at"]
         constraints = [
             models.UniqueConstraint(
                 fields=[

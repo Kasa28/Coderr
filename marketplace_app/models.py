@@ -22,6 +22,11 @@ class MarketplaceOffer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = "marketplace offer"
+        verbose_name_plural = "marketplace offers"
+        ordering = ["-updated_at"]
+
     def __str__(self):
         return self.title
 
@@ -51,6 +56,10 @@ class OfferPackage(models.Model):
         choices=OFFER_TYPE_CHOICES,
     )
 
+    class Meta:
+        verbose_name = "offer package"
+        verbose_name_plural = "offer packages"
+        ordering = ["offer", "price"]
+
     def __str__(self):
         return f"{self.offer.title} – {self.get_offer_type_display()}"
-# Create your models here.
