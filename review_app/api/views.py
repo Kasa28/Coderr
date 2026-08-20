@@ -1,5 +1,5 @@
 from rest_framework import filters, generics
-from rest_framework.permissions import (AllowAny, IsAuthenticated)
+from rest_framework.permissions import (IsAuthenticated)
 from django_filters.rest_framework import (DjangoFilterBackend)
 from review_app.api.filters import FilterForReview
 from review_app.api.permissions import CheckIsCustomerUser, CheckIsUserOwnsReview
@@ -24,7 +24,7 @@ class ReviewsView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsAuthenticated(), CheckIsCustomerUser()]
 
-        return [AllowAny()]
+        return [IsAuthenticated()]
 
 
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -35,7 +35,7 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [AllowAny()]
+            return [IsAuthenticated()]
 
         return [
             IsAuthenticated(),

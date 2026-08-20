@@ -54,7 +54,7 @@ class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [AllowAny()]
+            return [IsAuthenticated()]
 
         return [
             IsAuthenticated(),
@@ -82,7 +82,7 @@ class OfferPackageDetailView(generics.RetrieveAPIView):
         "offer__user",
     )
     serializer_class = OfferPackageSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class MarketplaceStatisticsView(APIView):
