@@ -16,7 +16,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
         if self.request.method == "GET":
             return [IsAuthenticated()]
         if self.request.method in ["PUT", "PATCH"]:
-            return [IsProfileOwnerOrReadOnly()]
+            return [IsAuthenticated(), IsProfileOwnerOrReadOnly()]
         return super().get_permissions()
     
 
