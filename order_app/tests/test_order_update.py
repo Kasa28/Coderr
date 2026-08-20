@@ -97,3 +97,8 @@ class OrderUpdateTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.order.refresh_from_db()
         self.assertEqual(self.order.status,"in_progress")
+
+    def test_business_user_gets_not_found_for_missing_order(self):
+        self.client.force_authenticate(user=self.business_user)
+        response = self.client.patch("/api/orders/99999/", {"status": "completed"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
