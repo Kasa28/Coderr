@@ -78,4 +78,4 @@ class OrderCountTests(APITestCase):
         response = self.client.get(f"/api/completed-order-count/"f"{self.business_user.id}/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["order_count"], 1,)
+        self.assertEqual(response.data["completed_order_count"], 1,)

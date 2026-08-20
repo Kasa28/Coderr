@@ -27,6 +27,13 @@ class OrderPermissionTests(APITestCase):
             type="customer",
         )
 
+        self.staff_user = User.objects.create_user(
+            username="staff_user",
+            password="Testpassword123!",
+            type="business",
+            is_staff=True,
+        )
+
         offer = MarketplaceOffer.objects.create(
             user=self.business_user,
             title="Testangebot",
@@ -61,3 +68,19 @@ class OrderPermissionTests(APITestCase):
         response = self.client.get(f"/api/orders/{self.order.id}/")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_staff_user_can_not_delete_order(self):
+        self.client.force_authenticate(user=self.business_user)
+
+        response = self.client.delete(f"/api/orders/{self.order.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Order.objects.filter(id=self.order.id).exists())
+
+    def test_staff_user_can_delete_order(self):
+        self.client.force_authenticate(user=self.staff_user)
+
+        response = self.client.delete(f"/api/orders/{self.order.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Order.objects.filter(id=self.order.id).exists())
