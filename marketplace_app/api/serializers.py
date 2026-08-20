@@ -60,15 +60,15 @@ class OfferSerializer(serializers.ModelSerializer):
         if self.instance:
             for package in packages:
                 if not package.get("offer_type"):
-                    raise serializers.ValidationError({"details": "Offer type is required."})
+                    raise serializers.ValidationError("Offer type is required.")
             return offer_data
 
         package_types = [package["offer_type"]for package in packages]
 
         if sorted(package_types) != ["basic", "premium", "standard"]:
-            raise serializers.ValidationError({
-                "details": ("Basic, standard and premium packages are required.")
-            })
+            raise serializers.ValidationError(
+                "Basic, standard and premium packages are required."
+            )
         return offer_data
 
 
