@@ -145,3 +145,40 @@ class GetMarketplaceOfferListTests(APITestCase):
         self.assertEqual(response.data["count"],7)
         self.assertEqual(len(response.data["results"]),6)
         self.assertIsNotNone(response.data["next"])
+
+    def test_page_size_limits_number_of_returned_offers(self):
+        MarketplaceOffer.objects.create(
+            user=self.business_user,
+            title="Second offer",
+            description="Test description",
+        )
+
+        response = self.client.get("/api/offers/?page_size=1")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["results"]), 1)
+
+    def test_filter_offers_by_minimum_price(self):
+        expensive_offer = MarketplaceOffer.objects.create(
+            user=self.business_user,
+            title="Expensive offer",
+            description="Test description",
+        )
+        OfferPackage.objects.create(
+            offer=expensive_offer,
+            title="Expensive Basic",
+            revisions=1,
+            delivery_time_in_days=5,
+            price="200.00",
+            features=["Test feature"],
+            offer_type="basic",
+        )
+
+        response = self.client.get("/api/offers/?min_price=150")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(
+            response.data["results"][0]["title"],
+            "Expensive offer",
+        )

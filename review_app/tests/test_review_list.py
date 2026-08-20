@@ -42,6 +42,8 @@ class ReviewFilterTests(APITestCase):
             description="Other review",
         )
 
+        self.client.force_authenticate(user=self.review_author)
+
 
     def test_only_reviews_for_selected_business_user_are_returned(self):
         response = self.client.get(
@@ -96,3 +98,8 @@ class ReviewFilterTests(APITestCase):
         second_review = response.data[1]
         self.assertEqual(first_review["rating"],5)
         self.assertEqual(second_review["rating"], 3)
+
+    def test_unauthenticated_user_can_not_list_reviews(self):
+        self.client.logout()
+        response = self.client.get("/api/reviews/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
