@@ -23,9 +23,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Ensure that both submitted passwords match."""
         if data["password"] != data["repeated_password"]:
-            raise serializers.ValidationError({
+            raise serializers.ValidationError(
                  "Die Passwörter stimmen nicht überein."
-            })
+            )
 
         return data
 
