@@ -31,12 +31,19 @@ class OfferDetailTests(APITestCase):
             offer_type="basic",
         )
 
+        self.client.force_authenticate(user=self.business_user)
+
     def test_get_single_offer(self):
         response = self.client.get(f"/api/offers/{self.offer.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"],self.offer.id)
         self.assertEqual(response.data["title"],"Testoffer")
         self.assertEqual(len(response.data["details"]),1)
+
+    def test_unauthenticated_user_can_not_get_single_offer(self):
+        self.client.logout()
+        response = self.client.get(f"/api/offers/{self.offer.id}/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
     def test_owner_can_update_offer_title(self):
@@ -123,3 +130,14 @@ class OfferDetailTests(APITestCase):
         self.assertEqual(response.data["title"], "Basic")
         self.assertEqual(response.data["price"], "100.00")
         self.assertEqual(response.data["offer_type"], "basic")
+
+    def test_unauthenticated_user_can_not_get_offer_package(self):
+        package = OfferPackage.objects.get(offer=self.offer, offer_type="basic")
+        self.client.logout()
+        response = self.client.get(f"/api/offerdetails/{package.id}/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_package_update_without_offer_type_returns_bad_request(self):
+        update_data = {"details": [{"title": "Missing offer type"}]}
+        response = self.client.patch(f"/api/offers/{self.offer.id}/", update_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
