@@ -65,39 +65,3 @@ class LoginView(APIView):
             "user_id": user.id,
         })
 
-
-class GuestLoginView(APIView):
-    """Create or reuse a shared guest account and return its token."""
-
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        user_type = request.data.get("type")
-
-        if user_type not in ["customer", "business"]:
-            return Response(
-                {"detail": "Type should be customer or business."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        username = f"guest_{user_type}"
-        guest_user, created = User.objects.get_or_create(
-            username=username,
-            defaults={
-                "type": user_type, "email": f"{username}@example.com",
-            },
-        )
-
-        if created:
-            guest_user.set_unusable_password()
-            guest_user.save(update_fields=["password"])
-
-        Profile.objects.get_or_create(user=guest_user)
-        token, _ = Token.objects.get_or_create(user=guest_user)
-
-        return Response({
-            "token": token.key,
-            "username": guest_user.username,
-            "email": guest_user.email,
-            "user_id": guest_user.id,
-        })

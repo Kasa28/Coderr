@@ -64,21 +64,9 @@ The separate frontend can be started with VS Code Live Server at `http://127.0.0
 
 ## Guest Login
 
-The application provides guest access for both user roles without registration or a password.
-
-```text
-POST /api/guest-login/
-```
-
-Example request:
-
-```json
-{
-  "type": "customer"
-}
-```
-
-The allowed values are `customer` and `business`.
+The application provides predefined customer and business demo accounts. The
+frontend sends their credentials through the regular `/api/login/` endpoint.
+The demo users are created automatically by the database migrations.
 
 Guest accounts are shared between visitors and are intended only for demonstration and testing. Changes made by one guest may be visible to other visitors.
 
@@ -94,7 +82,6 @@ Authorization: Token YOUR_TOKEN
 
 - `/api/registration/`
 - `/api/login/`
-- `/api/guest-login/`
 - `/api/profile/<user_id>/`
 - `/api/offers/`
 - `/api/orders/`
