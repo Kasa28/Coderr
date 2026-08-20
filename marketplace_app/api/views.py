@@ -1,13 +1,18 @@
-from django.db.models import Min
+from django.contrib.auth import get_user_model
+from django.db.models import Avg, Min
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from marketplace_app.api.filters import OfferFilter
 from marketplace_app.api.paginations import OffersResultPagination
 from marketplace_app.api.permissions import IsAuthenticatedBusinessUser, IsOfferOwner
 from marketplace_app.api.serializers import OfferSerializer, OfferPackageSerializer
 from marketplace_app.models import MarketplaceOffer, OfferPackage
+from review_app.models import Review
 
+User = get_user_model()
 
 class OffersListView(generics.ListCreateAPIView):
     serializer_class = OfferSerializer
@@ -72,3 +77,27 @@ class OfferPackageDetailView(generics.RetrieveAPIView):
     )
     serializer_class = OfferPackageSerializer
     permission_classes = [AllowAny]
+
+
+class MarketplaceStatisticsView(APIView):
+    
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        offer_count = MarketplaceOffer.objects.count()
+        review_count = Review.objects.count()
+        business_count = User.objects.filter(type="business").count()
+        rating_data = Review.objects.aggregate(average=Avg("rating"))
+        average_rating = rating_data["average"]
+
+        if average_rating is None:
+            average_rating = 0
+        else:
+            average_rating = round(average_rating, 1)
+
+        return Response({
+            "offer_count": offer_count,
+            "review_count": review_count,
+            "business_profile_count": business_count,
+            "average_rating": average_rating,
+        })
