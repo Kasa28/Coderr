@@ -54,6 +54,23 @@ class OfferSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
+    def validate(self, data):
+        """Require one basic, standard, and premium package on creation."""
+        if self.instance is not None:
+            return data
+
+        packages = data.get("packages", [])
+        package_types = {package["offer_type"] for package in packages}
+        required_package_types = {"basic", "standard", "premium"}
+
+        if len(packages) != 3 or package_types != required_package_types:
+            raise serializers.ValidationError({
+                "details": (
+                    "An offer must contain exactly one basic, " "one standard, and one premium package.")
+            })
+
+        return data
+
     def create(self, validated_data):
         """Create an offer and all packages submitted with it."""
         packages_data = validated_data.pop("packages")

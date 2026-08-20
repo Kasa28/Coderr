@@ -56,3 +56,42 @@ class CreateMarketplaceOfferTests(APITestCase):
         self.assertEqual(created_offer.user, self.business_user)
         self.assertEqual(created_offer.title,"New Website")
         self.assertEqual(OfferPackage.objects.filter(offer=created_offer).count(),3)
+
+    def test_offer_can_not_be_created_with_less_than_three_packages(self):
+        new_offer_data = {
+            "title": "Incomplete offer",
+            "description": "This offer has only one package.",
+            "details": [
+                {
+                    "title": "Basic",
+                    "revisions": 1,
+                    "delivery_time_in_days": 3,
+                    "price": "100.00",
+                    "features": ["Test feature"],
+                    "offer_type": "basic",
+                },
+            ],
+        }
+
+        response = self.client.post("/api/offers/", new_offer_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(MarketplaceOffer.objects.count(), 0)
+
+    def test_offer_requires_basic_standard_and_premium_packages(self):
+        package_data = {
+            "title": "Basic",
+            "revisions": 1,
+            "delivery_time_in_days": 3,
+            "price": "100.00",
+            "features": ["Test feature"],
+            "offer_type": "basic",
+        }
+        new_offer_data = {
+            "title": "Offer with duplicate package types",
+            "description": "This offer contains three basic packages.",
+            "details": [package_data, package_data, package_data],
+        }
+
+        response = self.client.post("/api/offers/", new_offer_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(MarketplaceOffer.objects.count(), 0)
