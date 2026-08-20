@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CoderrUser(AbstractUser):
+    """Custom user account with a customer or business role."""
+
     USER_TYPES = [
         ("customer", "Customer"),
         ("business", "Business"),

@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 
 class Profile(models.Model):
+    """Store public profile information belonging to one user."""
+
     
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

@@ -7,6 +7,7 @@ from profile_app.api.permissions import IsProfileOwnerOrReadOnly
 
 
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
+    """Retrieve a profile or update it when requested by its owner."""
 
     queryset = Profile.objects.select_related("user").all()
     serializer_class = ProfileSerializer
@@ -33,6 +34,8 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
 
 
 class BusinessProfileListView(generics.ListAPIView):
+    """List all profiles belonging to business users."""
+
     serializer_class = BusinessProfileSerializer
     permission_classes = [IsAuthenticated]
 
@@ -43,6 +46,8 @@ class BusinessProfileListView(generics.ListAPIView):
 
 
 class CustomerProfileListView(generics.ListAPIView):
+    """List all profiles belonging to customer users."""
+
     serializer_class = CustomerProfileSerializer
     permission_classes = [IsAuthenticated]
 

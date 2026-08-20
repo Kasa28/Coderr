@@ -4,6 +4,7 @@ from order_app.models import Order
 
 
 class OrderListCreateSerializer(serializers.ModelSerializer):
+    """List orders and create an order from a selected package."""
 
     offer_detail_id = serializers.PrimaryKeyRelatedField(
         queryset=OfferPackage.objects.all(),
@@ -45,6 +46,7 @@ class OrderListCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """Create an order by copying the selected package data."""
         selected_package = validated_data.pop(
             "offer_detail"
         )
@@ -68,6 +70,7 @@ class OrderListCreateSerializer(serializers.ModelSerializer):
 
 
 class OrderStatusSerializer(serializers.ModelSerializer):
+    """Return order details while allowing only its status to change."""
 
     status = serializers.ChoiceField(
         choices=Order.STATUS_CHOICES,

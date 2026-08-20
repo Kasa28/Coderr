@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 User = get_user_model()
 
 class OrdersView(generics.ListCreateAPIView):
+    """List the user's orders or create an order as a customer."""
+
     serializer_class = OrderListCreateSerializer
 
     def get_queryset(self):
@@ -35,6 +37,8 @@ class OrdersView(generics.ListCreateAPIView):
 
 
 class OrderDetailView(generics.RetrieveUpdateAPIView):
+    """Retrieve an involved order or update its status as its provider."""
+
     queryset = Order.objects.all()
     serializer_class = OrderStatusSerializer
 
@@ -51,6 +55,7 @@ class OrderDetailView(generics.RetrieveUpdateAPIView):
     
 
 class OpenOrdersCountView(APIView):
+    """Return the number of open orders for one business user."""
 
     permission_classes = [IsAuthenticated]
 
@@ -74,6 +79,7 @@ class OpenOrdersCountView(APIView):
 
 
 class CompletedOrdersCountView(APIView):
+    """Return the number of completed orders for one business user."""
     
     permission_classes = [IsAuthenticated]
 

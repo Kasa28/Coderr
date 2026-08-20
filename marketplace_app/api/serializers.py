@@ -2,6 +2,8 @@ from rest_framework import serializers
 from marketplace_app.models import MarketplaceOffer, OfferPackage
 
 class OfferPackageSerializer(serializers.ModelSerializer):
+    """Serialize the data of an individual offer package."""
+
     class Meta:
         model = OfferPackage
         fields = [
@@ -16,6 +18,8 @@ class OfferPackageSerializer(serializers.ModelSerializer):
 
 
 class OfferSerializer(serializers.ModelSerializer):
+    """Serialize offers together with their nested packages."""
+
     details = OfferPackageSerializer(
         source="packages",
         many=True,
@@ -51,6 +55,7 @@ class OfferSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """Create an offer and all packages submitted with it."""
         packages_data = validated_data.pop("packages")
         offer = MarketplaceOffer.objects.create(**validated_data)
 
@@ -63,6 +68,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     
     def update(self, offer, validated_data):
+        """Update an offer and the submitted package data."""
         package_list = validated_data.pop("packages", [])
         updated_offer = super().update(
             offer,

@@ -3,6 +3,8 @@ from auth_app.models import CoderrUser
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    """Validate registration data and create a new user account."""
+
     repeated_password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -19,6 +21,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, data):
+        """Ensure that both submitted passwords match."""
         if data["password"] != data["repeated_password"]:
             raise serializers.ValidationError({
                  "Die Passwörter stimmen nicht überein."
@@ -27,6 +30,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        """Create a user while hashing the submitted password."""
         validated_data.pop("repeated_password")
 
         user = CoderrUser.objects.create_user(

@@ -1,6 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 class CheckIsCustomerUser(BasePermission):
+    """Allow access only to authenticated customer users."""
 
     def has_permission(self, request, view):
         return (
@@ -10,6 +11,7 @@ class CheckIsCustomerUser(BasePermission):
 
 
 class CheckIsBusinessUser(BasePermission):
+    """Allow access only to authenticated business users."""
 
     def has_permission(self, request, view):
         return (
@@ -19,6 +21,7 @@ class CheckIsBusinessUser(BasePermission):
 
 
 class CheckBusinessOwnsOrder(BasePermission):
+    """Allow changes only to the business user receiving the order."""
 
     def has_object_permission(
         self,
@@ -32,6 +35,7 @@ class CheckBusinessOwnsOrder(BasePermission):
 
 
 class UserCanViewOrder(BasePermission):
+    """Allow an order to be viewed by its customer or business user."""
 
     def has_object_permission(
         self,

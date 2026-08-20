@@ -11,6 +11,8 @@ from .serializers import UserRegistrationSerializer
 User = get_user_model()
 
 class UserRegistrationView(APIView):
+    """Register a user and return an authentication token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -40,6 +42,8 @@ class UserRegistrationView(APIView):
 
 
 class LoginView(APIView):
+    """Authenticate a user and return an authentication token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -63,6 +67,8 @@ class LoginView(APIView):
 
 
 class GuestLoginView(APIView):
+    """Create or reuse a shared guest account and return its token."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):

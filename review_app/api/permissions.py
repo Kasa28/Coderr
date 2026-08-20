@@ -1,6 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 class CheckIsCustomerUser(BasePermission):
+    """Allow access only to authenticated customer users."""
 
     def has_permission(self, request, view):
         return (
@@ -10,6 +11,7 @@ class CheckIsCustomerUser(BasePermission):
 
 
 class CheckIsUserOwnsReview(BasePermission):
+    """Allow changes only when the review belongs to the user."""
 
     def has_object_permission(
         self,

@@ -3,6 +3,7 @@ from profile_app.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """Serialize and update a user's complete profile."""
 
     username = serializers.CharField(
         source="user.username",
@@ -47,6 +48,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
+        """Update profile fields and editable fields on its user account."""
         user_data = validated_data.pop("user", {})
         user = instance.user
 
@@ -59,6 +61,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class BusinessProfileSerializer(serializers.ModelSerializer):
+    """Provide public information for a business profile."""
+
     username = serializers.CharField(source="user.username", read_only=True)
     first_name = serializers.CharField(source="user.first_name", read_only=True)
     last_name = serializers.CharField(source="user.last_name", read_only=True)
@@ -82,6 +86,8 @@ class BusinessProfileSerializer(serializers.ModelSerializer):
 
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
+    """Provide public information for a customer profile."""
+
     username = serializers.CharField(source="user.username", read_only=True)
     first_name = serializers.CharField(source="user.first_name", read_only=True)
     last_name = serializers.CharField(source="user.last_name", read_only=True)

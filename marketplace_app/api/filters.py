@@ -3,6 +3,8 @@ from marketplace_app.models import MarketplaceOffer
 
 
 class OfferFilter(filters.FilterSet):
+    """Filter offers by creator and maximum package delivery time."""
+
     creator_id = filters.NumberFilter(field_name="user_id")
     max_delivery_time = filters.NumberFilter(
         field_name="packages__delivery_time_in_days",

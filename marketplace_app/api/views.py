@@ -15,6 +15,8 @@ from review_app.models import Review
 User = get_user_model()
 
 class OffersListView(generics.ListCreateAPIView):
+    """List all offers or create an offer as a business user."""
+
     serializer_class = OfferSerializer
     pagination_class = OffersResultPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -46,6 +48,8 @@ class OffersListView(generics.ListCreateAPIView):
 
 
 class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve an offer or let its owner update and delete it."""
+
     serializer_class = OfferSerializer
 
     def get_permissions(self):
@@ -71,6 +75,8 @@ class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
         )
 
 class OfferPackageDetailView(generics.RetrieveAPIView):
+    """Retrieve one offer package by its ID."""
+
     queryset = OfferPackage.objects.select_related(
         "offer",
         "offer__user",
@@ -80,6 +86,8 @@ class OfferPackageDetailView(generics.RetrieveAPIView):
 
 
 class MarketplaceStatisticsView(APIView):
+    """Return marketplace counts and the average review rating."""
+
     
     permission_classes = [AllowAny]
 

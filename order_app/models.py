@@ -3,6 +3,8 @@ from django.db import models
 from marketplace_app.models import OfferPackage
 
 class Order(models.Model):
+    """Store a customer's order as a snapshot of an offer package."""
+
 
     OFFER_TYPE_CHOICES = [
         ("basic", "Basic"),

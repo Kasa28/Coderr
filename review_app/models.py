@@ -3,6 +3,8 @@ from django.core.validators import (MaxValueValidator, MinValueValidator)
 from django.db import models
 
 class Review(models.Model):
+    """Store a customer's rating and review of a business user."""
+
 
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,

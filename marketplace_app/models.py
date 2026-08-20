@@ -3,6 +3,8 @@ from django.conf import settings
 
 
 class MarketplaceOffer(models.Model):
+    """Represent a digital service offered by a business user."""
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -25,6 +27,8 @@ class MarketplaceOffer(models.Model):
 
 
 class OfferPackage(models.Model):
+    """Represent one pricing package belonging to an offer."""
+
     OFFER_TYPE_CHOICES = [
         ("basic", "Basic"),
         ("standard", "Standard"),

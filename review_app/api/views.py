@@ -7,6 +7,8 @@ from review_app.api.serializers import SerializerForReview, WhenReviewUpdateSeri
 from review_app.models import Review
 
 class ReviewsView(generics.ListCreateAPIView):
+    """List reviews or create a review as a customer."""
+
     serializer_class = SerializerForReview
 
     queryset = Review.objects.select_related("reviewer", "business_user").all()
@@ -26,6 +28,8 @@ class ReviewsView(generics.ListCreateAPIView):
 
 
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve a review or let its author update and delete it."""
+
     queryset = Review.objects.all()
     serializer_class = WhenReviewUpdateSerializerAllowThisFields
 
