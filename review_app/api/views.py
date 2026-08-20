@@ -2,8 +2,8 @@ from rest_framework import filters, generics
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from django_filters.rest_framework import (DjangoFilterBackend)
 from review_app.api.filters import FilterForReview
-from review_app.api.permissions import CheckIsCustomerUser
-from review_app.api.serializers import SerializerForReview
+from review_app.api.permissions import CheckIsCustomerUser, CheckIsUserOwnsReview
+from review_app.api.serializers import SerializerForReview, WhenReviewUpdateSerializerAllowThisFields
 from review_app.models import Review
 
 class ReviewsView(generics.ListCreateAPIView):
@@ -23,3 +23,17 @@ class ReviewsView(generics.ListCreateAPIView):
             return [IsAuthenticated(), CheckIsCustomerUser()]
 
         return [AllowAny()]
+
+
+class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = WhenReviewUpdateSerializerAllowThisFields
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+
+        return [
+            IsAuthenticated(),
+            CheckIsUserOwnsReview(),
+        ]
