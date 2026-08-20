@@ -7,3 +7,14 @@ class CheckIsCustomerUser(BasePermission):
             request.user.is_authenticated
             and request.user.type == "customer"
         )
+
+
+class CheckIsUserOwnsReview(BasePermission):
+
+    def has_object_permission(
+        self,
+        request,
+        view,
+        review,
+    ):
+        return review.reviewer == request.user
