@@ -46,5 +46,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = "order"
+        verbose_name_plural = "orders"
+        ordering = ["-created_at"]
+
     def __str__(self):
         return f"{self.title} - Customer {self.customer_user.username}"
